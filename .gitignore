@@ -9,3 +9,6 @@
 /build
 /captures
 .externalNativeBuild
+app/src/main/libs/
+app/src/main/obj/
+app/build/
