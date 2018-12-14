@@ -14,7 +14,8 @@
  */
 JNIEXPORT jint JNICALL Java_com_fxj_ffmpegdecoder01_NativePlayer_playVideo(JNIEnv *env, jclass obj, jstring url, jobject suface)
 {
-
+    const char *tag="playVideo";
+    LogD(tag,"start playvideo... url");
     return 1;
 }
 
