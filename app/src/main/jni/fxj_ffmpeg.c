@@ -115,6 +115,27 @@ JNIEXPORT jint JNICALL Java_com_fxj_ffmpegdecoder01_NativePlayer_playVideo(JNIEn
                    NULL);
 
 
+    AVPacket packet;
+    int frameFinished;
+    ANativeWindow_Buffer windowBuffer;
+    while(av_read_frame(pFormateContext,&packet)>=0){
+
+        if(packet.stream_index==videoStreamIndex){/*AVPacket数据帧中*/
+
+            /*解码出一帧数据，如果没有数据帧可以解压则frameFinished为零，反之则frameFinished不为零*/
+            avcodec_decode_video2(pCodecContext,pFrame,&frameFinished,&packet);
+            LogD(tag,"frameFinished=%d\n",frameFinished);
+            if(frameFinished){
+                /*lock native window buffer*/
+                ANativeWindow_lock(pNativeWiondow,&windowBuffer,0);
+
+            }
+
+        }
+        av_packet_unref(&packet);/*调用av_packet_unref后packet.data置为NULL,packet.size=0*/
+    }
+
+
     avformat_free_context(pFormateContext);/*释放掉AVFormateContext变量*/
     (*env)->ReleaseStringUTFChars(env,url,mUrl);/*释放指向UTF-8格式的cha *指针变量mUrl*/
     return 1;
