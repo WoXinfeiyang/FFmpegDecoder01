@@ -2,11 +2,12 @@ package com.fxj.ffmpegdecoder01;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.Button;
+
+import java.io.File;
 
 public class MainActivity extends Activity implements SurfaceHolder.Callback{
 
@@ -14,7 +15,9 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback{
     private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
 
-    private final String URL="rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
+    private final String URL1="rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
+
+    private final String URL2=Environment.getExternalStorageDirectory()+ File.separator+"cuc_ieschool.mp4";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +28,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback{
         surfaceHolder = surfaceView.getHolder();
 
         surfaceHolder.addCallback(this);
-
+        Log.d(TAG,"URL2="+URL2);
     }
 
 
@@ -35,7 +38,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback{
         new Thread(new Runnable() {
             @Override
             public void run() {
-                NativePlayer.playVideo(URL,surfaceHolder.getSurface());
+                NativePlayer.playVideo(URL1,surfaceHolder.getSurface());
             }
         }).start();
     }
