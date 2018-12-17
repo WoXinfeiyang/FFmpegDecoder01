@@ -15,7 +15,11 @@
 JNIEXPORT jint JNICALL Java_com_fxj_ffmpegdecoder01_NativePlayer_playVideo(JNIEnv *env, jclass obj, jstring url, jobject suface)
 {
     const char *tag="playVideo";
-    LogD(tag,"start playvideo... url");
+    /*将jstring对象转换成UTF-8格式的字符串,得到一个字符指针变量char**/
+    const char *mUrl= (*env)->GetStringUTFChars(env,url,0);
+    LogD(tag,"start playvideo... url=%s",mUrl);
+
+    (*env)->ReleaseStringUTFChars(env,url,mUrl);/*释放指向UTF-8格式的cha *指针变量mUrl*/
     return 1;
 }
 
