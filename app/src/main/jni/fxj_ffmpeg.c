@@ -88,9 +88,9 @@ JNIEXPORT jint JNICALL Java_com_fxj_ffmpegdecoder01_NativePlayer_playVideo(JNIEn
         return -1;
     }
 
-    /*创建一个指向AVFrame的指针对象,video Frame*/
+    /*创建一个指向AVFrame的指针变量,video Frame*/
     AVFrame* pFrame=av_frame_alloc();
-    /*创建用于渲染的AVFrame指针对象*/
+    /*创建用于渲染的AVFrame指针变量*/
     AVFrame* pFrameRGB=av_frame_alloc();
     if(pFrame==NULL||pFrameRGB==NULL){
         LogE(tag,"Could not allocate video frame.");
@@ -101,6 +101,9 @@ JNIEXPORT jint JNICALL Java_com_fxj_ffmpegdecoder01_NativePlayer_playVideo(JNIEn
     int numBytes=av_image_get_buffer_size(AV_PIX_FMT_RGBA,width,height,1);
     uint8_t *buffer=(uint8_t*)av_malloc(numBytes*(sizeof(uint8_t)));
 
+    /*参考链接:https://ffmpeg.org/doxygen/3.1/group__lavu__picture.html#ga5b6ead346a70342ae8a303c16d2b3629
+     * 将输入数据buffer填充到pFrameRGB->data
+     * */
     av_image_fill_arrays(pFrameRGB->data,pFrameRGB->linesize,buffer,AV_PIX_FMT_RGBA,width,height,1);
 
     struct SwsContext *swsContext= sws_getContext(pCodecContext->width,
@@ -122,23 +125,57 @@ JNIEXPORT jint JNICALL Java_com_fxj_ffmpegdecoder01_NativePlayer_playVideo(JNIEn
 
         if(packet.stream_index==videoStreamIndex){/*AVPacket数据帧中*/
 
-            /*解码出一帧数据，如果没有数据帧可以解压则frameFinished为零，反之则frameFinished不为零*/
+            /*解码出一帧数据，如果没有数据帧可以解压则frameFinished为零，反之则frameFinished不为零,pFrame存储解码之后的数据*/
             avcodec_decode_video2(pCodecContext,pFrame,&frameFinished,&packet);
             LogD(tag,"frameFinished=%d\n",frameFinished);
             if(frameFinished){
                 /*lock native window buffer*/
                 ANativeWindow_lock(pNativeWiondow,&windowBuffer,0);
 
+                /*
+                 * 图像数据格式转换
+                 * 参考链接:
+                 * https://www.ffmpeg.org/doxygen/trunk/group__libsws.html#gae531c9754c9205d90ad6800015046d74,
+                 * http://www.itnotepad.cn/Home/Article/num/194.html,
+                 * https://www.jianshu.com/p/48e8411b86ba
+                 * */
+                sws_scale(swsContext,
+                          (uint8_t const * const *)pFrame->data,/*输入图像数据*/
+                          pFrame->linesize,/*输入图像数据颜色通道每行存储的字节数数组*/
+                          0,/*从输入图像数据的第多少列开始逐行扫描，通常设为0；*/
+                          pCodecContext->height,/*需要扫描多少行，通常为输入图像数据的高度*/
+                          pFrameRGB->data,/*输出图像数据*/
+                          pFrameRGB->linesize/*输出图像数据颜色通道每行存储的字节数数组*/
+                );
+
+                /*获取stride*/
+                uint8_t *dst=windowBuffer.bits;
+                int dstStride=windowBuffer.stride*4;
+                uint8_t *src=(uint8_t *)(pFrameRGB->data[0]);
+                int srcStride=pFrameRGB->linesize[0];
+
+                /*由于window的stride和帧的stride不同,因此需要逐行复制*/
+                int h;
+                for(h=0;h<height;h++){
+                    memcpy(dst+h*dstStride,src+h*srcStride,srcStride);
+                }
+                ANativeWindow_unlockAndPost(pNativeWiondow);
             }
 
         }
         av_packet_unref(&packet);/*调用av_packet_unref后packet.data置为NULL,packet.size=0*/
     }
 
+    av_free(buffer);
+    av_free(pFrame);
+    av_free(pFrameRGB);
 
+    avcodec_close(pCodecContext);/*释放掉AVCodecContext指针变量*/
+
+    sws_freeContext(swsContext);/*释放掉struct SwsContext指针变量*/
     avformat_free_context(pFormateContext);/*释放掉AVFormateContext变量*/
     (*env)->ReleaseStringUTFChars(env,url,mUrl);/*释放指向UTF-8格式的cha *指针变量mUrl*/
-    return 1;
+    return 0;
 }
 
 /*

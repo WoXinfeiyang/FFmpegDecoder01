@@ -2,22 +2,37 @@ package com.fxj.ffmpegdecoder01;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import java.io.File;
 
 public class MainActivity extends Activity implements SurfaceHolder.Callback{
 
     private final String TAG=MainActivity.class.getSimpleName();
     private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
+    /**CCTV1高清*/
+    private final String URL1="http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8";
+    /**CCTV3高清*/
+    private final String URL2="http://ivi.bupt.edu.cn/hls/cctv3hd.m3u8";
+    /**CCTV5高清*/
+    private final String URL3="http://ivi.bupt.edu.cn/hls/cctv5hd.m3u8";
+    /**CCTV5+高清*/
+    private final String URL4="http://ivi.bupt.edu.cn/hls/cctv5phd.m3u8";
+    /**CCTV6高清*/
+    private final String URL5 ="http://ivi.bupt.edu.cn/hls/cctv6hd.m3u8";
 
-    private final String URL1="rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
+    /**TVB翡翠台*/
+    private final String URL6="http://123.207.42.38/tvb.php?type=jade";
+    /**凤凰卫视中文台*/
+    private final String URL7="http://111.13.42.13/PLTV/88888888/224/3221225942/1.m3u8";
+    /**香港电视*/
+    private final String URL8="http://media.fantv.hk/m3u8/archive/channel2.m3u8";
+    /**大熊兔（点播）*/
+    private final String URL9="rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov";
+    /**苹果测试源*/
+    private final String URL10="http://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/gear2/prog_index.m3u8";
 
-    private final String URL2=Environment.getExternalStorageDirectory()+ File.separator+"cuc_ieschool.mp4";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +43,6 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback{
         surfaceHolder = surfaceView.getHolder();
 
         surfaceHolder.addCallback(this);
-        Log.d(TAG,"URL2="+URL2);
     }
 
 
@@ -38,7 +52,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback{
         new Thread(new Runnable() {
             @Override
             public void run() {
-                NativePlayer.playVideo(URL1,surfaceHolder.getSurface());
+                NativePlayer.playVideo(URL5,surfaceHolder.getSurface());
             }
         }).start();
     }
