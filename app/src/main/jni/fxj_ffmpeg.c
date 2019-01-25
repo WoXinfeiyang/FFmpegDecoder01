@@ -60,6 +60,14 @@ JNIEXPORT jint JNICALL Java_com_fxj_ffmpegdecoder01_NativePlayer_playVideo(JNIEn
         return -1;
     }
 
+    /*输入封装格式对应的struct对象*/
+    AVInputFormat *inputFormat= pFormateContext->iformat;
+    if(inputFormat==NULL){
+        LogE(tag,"Not find AVInputFormat!");
+    }else{
+        LogD(tag,"**AVInputFormat**封装格式名称name=%s,封装格式长名称long_name=%s,封装格式扩展名extensions=%s\n",inputFormat->name,inputFormat->long_name,inputFormat->extensions)
+    }
+
     /*查找解码器,创建一个指向AVCodec的指针变量*/
     AVCodec *pCodec=avcodec_find_decoder(pCodecContext->codec_id);
     if(pCodec==NULL){

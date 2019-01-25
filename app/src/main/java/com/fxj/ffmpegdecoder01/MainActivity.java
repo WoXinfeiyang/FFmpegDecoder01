@@ -34,7 +34,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback{
     private final String URL10="http://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/gear2/prog_index.m3u8";
     /**CCTV1高清rtsp源*/
     private final String URL11="rtsp://120.205.96.36:554/live/ch16022919053041099962.sdp?playtype=1&boid=001&backupagent=120.205.32.36:554&clienttype=1&time=20161205230814+08&life=172800&ifpricereqsnd=1&vcdnid=001&userid=&mediaid=ch16022919053041099962&ctype=2&TSTVTimeLife=60&contname=&authid=0&terminalflag=1&UserLiveType=0&stbid=&nodelevel=3";
-
+    private final String URL12="http://ips.ifeng.com/video19.ifeng.com/video09/2019/01/09/4966943-102-007-1715.mp4";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
