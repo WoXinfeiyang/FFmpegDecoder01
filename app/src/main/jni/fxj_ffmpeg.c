@@ -133,7 +133,7 @@ JNIEXPORT jint JNICALL Java_com_fxj_ffmpegdecoder01_NativePlayer_playVideo(JNIEn
 
         if(packet.stream_index==videoStreamIndex){/*AVPacket数据帧中*/
 
-            /*解码出一帧数据，如果没有数据帧可以解压则frameFinished为零，反之则frameFinished不为零,pFrame存储解码之后的数据*/
+            /*解码出一帧视频数据，如果没有数据帧可以解压则frameFinished为零，反之则frameFinished不为零,pFrame存储解码之后的数据*/
             avcodec_decode_video2(pCodecContext,pFrame,&frameFinished,&packet);
             LogD(tag,"frameFinished=%d\n",frameFinished);
             if(frameFinished){

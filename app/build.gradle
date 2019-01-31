@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+
+String mVersionName=project.property("VERSION_NAME")
+int mVersionCode=Integer.parseInt(project.property("VERSION_CODE"))
+
 android {
     compileSdkVersion 28
 
@@ -7,8 +11,8 @@ android {
         applicationId "com.fxj.ffmpegdecoder01"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode mVersionCode
+        versionName mVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         ndk{

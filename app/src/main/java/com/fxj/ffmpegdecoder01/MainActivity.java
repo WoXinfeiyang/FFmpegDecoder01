@@ -1,6 +1,9 @@
 package com.fxj.ffmpegdecoder01;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -45,6 +48,19 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback{
         surfaceHolder = surfaceView.getHolder();
 
         surfaceHolder.addCallback(this);
+        PackageInfo info=getPakageInfo(this);
+        Log.d(TAG,"versionName="+info.versionName+",versionCode="+info.versionCode);
+    }
+
+    private PackageInfo getPakageInfo(Context ctx){
+        PackageManager mng=ctx.getPackageManager();
+        PackageInfo info=null;
+        try {
+            info= mng.getPackageInfo(ctx.getPackageName(),PackageManager.GET_CONFIGURATIONS);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return info;
     }
 
 
